@@ -426,8 +426,8 @@ export default function PokemonPanel({ opponentTypes, onDefendingTypesChange }: 
                   </div>
                 </div>
 
-                <div className="grid grid-cols-5 gap-3">
-                  <div className="col-span-3 text-left">
+                <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
+                  <div className="md:col-span-3 text-left">
                     <div className="mb-1 pl-[1.375rem] text-left text-sm font-semibold text-slate-200/90">Moveset</div>
                     {movesLoading && <div className="text-xs text-gray-500">Loading moves…</div>}
                     {movesError && <div className="text-xs text-red-600">{movesError}</div>}
@@ -501,7 +501,7 @@ export default function PokemonPanel({ opponentTypes, onDefendingTypesChange }: 
                     )}
                   </div>
 
-                  <div className="col-span-2 text-left">
+                  <div className="md:col-span-2 text-left">
                     {stats && stats.length > 0 && (
                       <div className="text-left">
                         <div className="mb-1 text-center text-sm font-semibold text-slate-200/90">Base Stats</div>

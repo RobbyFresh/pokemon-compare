@@ -39,7 +39,7 @@ export default function App() {
           </div>
         </div>
         <p className="mb-4 text-center text-sm text-slate-500">Search by name or #; select forms like Hisuian from the dropdown.</p>
-        <div className="flex flex-col items-start gap-4 md:flex-row">
+        <div className="flex items-start gap-4">
           <div className="p-3 flex-1 min-w-0">
             <PokemonPanel
               side="left"
