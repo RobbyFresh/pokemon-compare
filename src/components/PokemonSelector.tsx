@@ -40,7 +40,7 @@ export default function PokemonSelector({ value, onChange }: PokemonSelectorProp
   const filtered = useMemo(() => {
     if (!allSpecies) return [] as SpeciesListItem[]
     const q = query.trim().toLowerCase()
-    if (!q) return []
+    if (!q) return allSpecies
     const asNumber = Number(q)
     if (!Number.isNaN(asNumber)) {
       return allSpecies.filter((s) => String(s.id).startsWith(String(asNumber)))

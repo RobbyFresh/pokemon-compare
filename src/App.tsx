@@ -9,7 +9,7 @@ export default function App() {
   return (
     <div className="relative min-h-screen overflow-hidden text-slate-100">
       <div className="battle-bg" />
-      <div className="mx-auto max-w-[1400px] p-4 sm:p-6">
+      <div className="mx-auto max-w-[1400px] sm:p-6">
         <div className="mb-2 flex items-center justify-between">
           <div className="flex-1" />
           <div className="flex items-center justify-center gap-2">
@@ -40,14 +40,14 @@ export default function App() {
         </div>
         <p className="mb-4 text-center text-sm text-slate-500">Search by name or #; select forms like Hisuian from the dropdown.</p>
         <div className="flex items-start gap-4">
-          <div className="p-3 flex-1 min-w-0">
+          <div className="sm:p-3 flex-1 min-w-0">
             <PokemonPanel
               side="left"
               opponentTypes={rightTypes}
               onDefendingTypesChange={setLeftTypes}
             />
           </div>
-          <div className="p-3 flex-1 min-w-0">
+          <div className="sm:p-3 flex-1 min-w-0">
             <PokemonPanel
               side="right"
               opponentTypes={leftTypes}
