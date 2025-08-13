@@ -1,5 +1,3 @@
-import type { PokemonTypeName } from './pokeapi'
-
 const typeColorMap: Record<string, string> = {
   normal: '#A8A77A',
   fire: '#EE8130',

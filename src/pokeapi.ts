@@ -64,6 +64,11 @@ export type Pokemon = {
     other?: Record<string, { front_default?: string | null }>
   }
   types: PokemonTypeSlot[]
+  stats: Array<{
+    base_stat: number
+    effort: number
+    stat: NamedAPIResource
+  }>
   moves: Array<{
     move: NamedAPIResource
     version_group_details: Array<{
