@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { fetchAllSpeciesList, type SpeciesListItem } from '../pokeapi'
 
 export type PokemonSelectorValue = {
@@ -16,6 +16,7 @@ export default function PokemonSelector({ value, onChange }: PokemonSelectorProp
   const [allSpecies, setAllSpecies] = useState<SpeciesListItem[] | null>(null)
   const [query, setQuery] = useState('')
   const [open, setOpen] = useState(false)
+  const inputRef = useRef<HTMLInputElement>(null)
 
   const formatPokemonName = (name: string) =>
     name
@@ -51,6 +52,7 @@ export default function PokemonSelector({ value, onChange }: PokemonSelectorProp
   return (
     <div className="relative z-30 w-full hover-lift">
       <input
+        ref={inputRef}
         className="w-full rounded-2xl border border-slate-600 bg-slate-800/70 px-3 py-2 text-sm text-slate-100 placeholder-slate-400 shadow-sm focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-300"
         placeholder={value ? `#${value.speciesId} ${formatPokemonName(value.name)}` : 'Search by name or Pokédex #'}
         value={query}
@@ -70,6 +72,7 @@ export default function PokemonSelector({ value, onChange }: PokemonSelectorProp
               onChange({ speciesId: top.id, name: top.name, queryHint: query })
               setQuery('')
               setOpen(false)
+              inputRef.current?.blur()
               e.preventDefault()
               e.stopPropagation()
             }
@@ -89,6 +92,7 @@ export default function PokemonSelector({ value, onChange }: PokemonSelectorProp
                 onChange({ speciesId: s.id, name: s.name, queryHint: query })
                 setQuery('')
                 setOpen(false)
+                inputRef.current?.blur()
               }}
             >
               <img

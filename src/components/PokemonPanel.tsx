@@ -443,7 +443,7 @@ export default function PokemonPanel({ opponentTypes, onDefendingTypesChange }: 
                                 className="rounded-2xl border border-slate-600/40 bg-slate-700/40 p-0 shadow hover-lift"
                               >
                                 <button
-                                  className="flex w-full items-center justify-between gap-2 px-2 py-1 text-left text-xs text-slate-200 hover:bg-slate-600/40"
+                                  className="flex w-full items-center justify-between gap-1 sm:gap-2 px-2 py-1 text-left text-xs text-slate-200 hover:bg-slate-600/40"
                                   onClick={async () => {
                                     // Toggle off if the same move is clicked again
                                     if (selectedMoveDetail?.name === mv.name) {
@@ -522,12 +522,12 @@ export default function PokemonPanel({ opponentTypes, onDefendingTypesChange }: 
                               .replace(/\b\w/g, (m) => m.toUpperCase())
 
                             return (
-                              <div key={stat.name} className="grid grid-cols-12 items-center gap-1 text-xs">
-                                <span className="col-span-4 truncate text-right text-slate-300">{statLabel}</span>
-                                <span className="col-span-2 text-center font-bold tabular-nums text-white">
-                                  {stat.value}
-                                </span>
-                                <div className="col-span-6 w-full rounded-full bg-slate-800/70 h-2.5">
+                              <div key={stat.name} className="grid grid-cols-2 sm:grid-cols-12 items-center gap-1 text-xs">
+                                <div className="col-span-1 sm:col-span-6 flex justify-between">
+                                  <span className="truncate text-left text-slate-300">{statLabel}</span>
+                                  <span className="font-bold tabular-nums text-white">{stat.value}</span>
+                                </div>
+                                <div className="col-span-1 sm:col-span-6 w-full rounded-full bg-slate-800/70 h-2.5">
                                   <div
                                     className={`${statColor} h-2.5 rounded-full`}
                                     style={{ width: `${(stat.value / 255) * 100}%` }}
