@@ -38,6 +38,7 @@ export default function PokemonPanel({ opponentTypes, onDefendingTypesChange }: 
   const [movesLoading, setMovesLoading] = useState(false)
   const [movesError, setMovesError] = useState<string | null>(null)
   const [moves, setMoves] = useState<Array<{ name: string; power: number | null; typeName: string }>>([])
+  const [stats, setStats] = useState<{ name: string; value: number }[] | null>(null)
   const [selectedMoveDetail, setSelectedMoveDetail] = useState<{
     name: string
     typeName: string
@@ -149,6 +150,8 @@ export default function PokemonPanel({ opponentTypes, onDefendingTypesChange }: 
           const species = await fetchSpecies(pokemon.name)
           setSelected({ speciesId: species.id, name: species.name })
         }
+
+        setStats(pokemon.stats.map((s) => ({ name: s.stat.name, value: s.base_stat })))
 
         // Load moves for the latest available version group for this Pokémon
         setMovesLoading(true)
@@ -419,72 +422,124 @@ export default function PokemonPanel({ opponentTypes, onDefendingTypesChange }: 
                   </div>
                   <div>
                     <div className="mb-1 text-center text-sm font-semibold text-slate-200/90">Immunities</div>
-                    {immunities.length ? typeChips(immunities) : (
-                      <div className="text-xs text-gray-500">None</div>
-                    )}
+                    {immunities.length ? typeChips(immunities) : <div className="text-xs text-gray-500">None</div>}
                   </div>
                 </div>
 
-                <div className="text-left">
-                  <div className="mb-1 pl-[1.375rem] text-left text-sm font-semibold text-slate-200/90">Moveset</div>
-                  {movesLoading && <div className="text-xs text-gray-500">Loading moves…</div>}
-                  {movesError && <div className="text-xs text-red-600">{movesError}</div>}
-                  {!movesLoading && !movesError && (
-                    <div className="max-h-80 overflow-auto pr-1">
-                      <div className="grid grid-cols-1 gap-1 sm:grid-cols-2">
-                      {sortedMoves.map((mv) => {
-                        const isSelected = selectedMoveDetail?.name === mv.name
-                        const isLoading = loadingMoveName === mv.name
-                        return (
-                          <div key={mv.name} className="rounded-2xl border border-slate-600/40 bg-slate-700/40 p-0 shadow hover-lift">
-                            <button
-                              className="flex w-full items-center justify-between gap-2 px-2 py-1 text-left text-xs text-slate-200 hover:bg-slate-600/40"
-                              onClick={async () => {
-                                // Toggle off if the same move is clicked again
-                                if (selectedMoveDetail?.name === mv.name) {
-                                  setSelectedMoveDetail(null)
-                                  return
-                                }
-                                setLoadingMoveName(mv.name)
-                                try {
-                                  const { fetchMove } = await import('../pokeapi')
-                                  const d = await fetchMove(mv.name)
-                                  const desc =
-                                    d.effect_entries.find((e) => e.language.name === 'en')?.short_effect ??
-                                    d.flavor_text_entries?.find((e) => e.language.name === 'en')?.flavor_text?.replace(/\s+/g, ' ') ??
-                                    '—'
-                                  setSelectedMoveDetail({
-                                    name: mv.name,
-                                    typeName: mv.typeName,
-                                    power: mv.power,
-                                    description: desc,
-                                  })
-                                } catch {
-                                  setSelectedMoveDetail({ name: mv.name, typeName: mv.typeName, power: mv.power, description: '—' })
-                                } finally {
-                                  setLoadingMoveName(null)
-                                }
-                              }}
-                            >
-                              <span className={`rounded-full px-2 py-0.5 capitalize ${getTypeColor(mv.typeName)}`}>{formatTypeName(mv.typeName)}</span>
-                              <span className="flex-1 truncate capitalize px-1">{mv.name.replace(/-/g, ' ')}</span>
-                              <span className="tabular-nums text-slate-300">{mv.power ?? '-'}</span>
-                            </button>
-                            {(isSelected || isLoading) && (
-                              <div className="border-t border-slate-600/40 px-2 py-1 text-xs">
-                                {isLoading ? (
-                                  <span className="text-slate-400">Loading…</span>
-                                ) : (
-                                  <span className="text-slate-200">{selectedMoveDetail?.description}</span>
+                <div className="grid grid-cols-5 gap-3">
+                  <div className="col-span-3 text-left">
+                    <div className="mb-1 pl-[1.375rem] text-left text-sm font-semibold text-slate-200/90">Moveset</div>
+                    {movesLoading && <div className="text-xs text-gray-500">Loading moves…</div>}
+                    {movesError && <div className="text-xs text-red-600">{movesError}</div>}
+                    {!movesLoading && !movesError && (
+                      <div className="max-h-80 overflow-auto pr-1">
+                        <div className="grid grid-cols-1 gap-1">
+                          {sortedMoves.map((mv) => {
+                            const isSelected = selectedMoveDetail?.name === mv.name
+                            const isLoading = loadingMoveName === mv.name
+                            return (
+                              <div
+                                key={mv.name}
+                                className="rounded-2xl border border-slate-600/40 bg-slate-700/40 p-0 shadow hover-lift"
+                              >
+                                <button
+                                  className="flex w-full items-center justify-between gap-2 px-2 py-1 text-left text-xs text-slate-200 hover:bg-slate-600/40"
+                                  onClick={async () => {
+                                    // Toggle off if the same move is clicked again
+                                    if (selectedMoveDetail?.name === mv.name) {
+                                      setSelectedMoveDetail(null)
+                                      return
+                                    }
+                                    setLoadingMoveName(mv.name)
+                                    try {
+                                      const { fetchMove } = await import('../pokeapi')
+                                      const d = await fetchMove(mv.name)
+                                      const desc =
+                                        d.effect_entries.find((e) => e.language.name === 'en')?.short_effect ??
+                                        d.flavor_text_entries
+                                          ?.find((e) => e.language.name === 'en')
+                                          ?.flavor_text?.replace(/\s+/g, ' ') ??
+                                        '—'
+                                      setSelectedMoveDetail({
+                                        name: mv.name,
+                                        typeName: mv.typeName,
+                                        power: mv.power,
+                                        description: desc,
+                                      })
+                                    } catch {
+                                      setSelectedMoveDetail({
+                                        name: mv.name,
+                                        typeName: mv.typeName,
+                                        power: mv.power,
+                                        description: '—',
+                                      })
+                                    } finally {
+                                      setLoadingMoveName(null)
+                                    }
+                                  }}
+                                >
+                                  <span className={`rounded-full px-2 py-0.5 capitalize ${getTypeColor(mv.typeName)}`}>
+                                    {formatTypeName(mv.typeName)}
+                                  </span>
+                                  <span className="flex-1 truncate capitalize px-1">{mv.name.replace(/-/g, ' ')}</span>
+                                  <span className="tabular-nums text-slate-300">{mv.power ?? '-'}</span>
+                                </button>
+                                {(isSelected || isLoading) && (
+                                  <div className="border-t border-slate-600/40 px-2 py-1 text-xs">
+                                    {isLoading ? (
+                                      <span className="text-slate-400">Loading…</span>
+                                    ) : (
+                                      <span className="text-slate-200">{selectedMoveDetail?.description}</span>
+                                    )}
+                                  </div>
                                 )}
                               </div>
-                            )}
-                          </div>
-                        )
-                      })}
+                            )
+                          })}
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
+                  </div>
+
+                  <div className="col-span-2 text-left">
+                    {stats && stats.length > 0 && (
+                      <div className="text-left">
+                        <div className="mb-1 text-center text-sm font-semibold text-slate-200/90">Base Stats</div>
+                        <div className="flex flex-col gap-2 rounded-2xl border border-slate-600/40 bg-slate-700/40 p-2 shadow">
+                          {stats.map((stat) => {
+                            const statColor =
+                              stat.value < 60
+                                ? 'bg-red-500'
+                                : stat.value < 90
+                                ? 'bg-yellow-500'
+                                : stat.value < 120
+                                ? 'bg-green-500'
+                                : 'bg-cyan-500'
+                            const statLabel = stat.name
+                              .replace('special-attack', 'Sp. Atk')
+                              .replace('special-defense', 'Sp. Def')
+                              .replace('-', ' ')
+                              .replace(/\b\w/g, (m) => m.toUpperCase())
+
+                            return (
+                              <div key={stat.name} className="grid grid-cols-12 items-center gap-1 text-xs">
+                                <span className="col-span-4 truncate text-right text-slate-300">{statLabel}</span>
+                                <span className="col-span-2 text-center font-bold tabular-nums text-white">
+                                  {stat.value}
+                                </span>
+                                <div className="col-span-6 w-full rounded-full bg-slate-800/70 h-2.5">
+                                  <div
+                                    className={`${statColor} h-2.5 rounded-full`}
+                                    style={{ width: `${(stat.value / 255) * 100}%` }}
+                                  ></div>
+                                </div>
+                              </div>
+                            )
+                          })}
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             )}
