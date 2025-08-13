@@ -443,7 +443,7 @@ export default function PokemonPanel({ opponentTypes, onDefendingTypesChange }: 
                                 className="rounded-2xl border border-slate-600/40 bg-slate-700/40 p-0 shadow hover-lift"
                               >
                                 <button
-                                  className="flex w-full items-center justify-between gap-1 sm:gap-2 px-2 py-1 text-left text-xs text-slate-200 hover:bg-slate-600/40"
+                                  className="flex w-full flex-wrap items-center justify-between gap-x-2 gap-y-1 px-2 py-1 text-left text-xs text-slate-200 hover:bg-slate-600/40 sm:flex-nowrap"
                                   onClick={async () => {
                                     // Toggle off if the same move is clicked again
                                     if (selectedMoveDetail?.name === mv.name) {
@@ -478,10 +478,14 @@ export default function PokemonPanel({ opponentTypes, onDefendingTypesChange }: 
                                     }
                                   }}
                                 >
-                                  <span className={`rounded-full px-2 py-0.5 capitalize ${getTypeColor(mv.typeName)}`}>
+                                  <span className="w-full truncate capitalize sm:w-auto sm:flex-1 sm:px-1">
+                                    {mv.name.replace(/-/g, ' ')}
+                                  </span>
+                                  <span
+                                    className={`rounded-full px-2 py-0.5 capitalize ${getTypeColor(mv.typeName)}`}
+                                  >
                                     {formatTypeName(mv.typeName)}
                                   </span>
-                                  <span className="flex-1 truncate capitalize px-1">{mv.name.replace(/-/g, ' ')}</span>
                                   <span className="tabular-nums text-slate-300">{mv.power ?? '-'}</span>
                                 </button>
                                 {(isSelected || isLoading) && (
@@ -522,12 +526,15 @@ export default function PokemonPanel({ opponentTypes, onDefendingTypesChange }: 
                               .replace(/\b\w/g, (m) => m.toUpperCase())
 
                             return (
-                              <div key={stat.name} className="grid grid-cols-2 sm:grid-cols-12 items-center gap-1 text-xs">
-                                <div className="col-span-1 sm:col-span-6 flex justify-between">
+                              <div
+                                key={stat.name}
+                                className="flex flex-col sm:grid sm:grid-cols-12 items-center gap-1 text-xs"
+                              >
+                                <div className="flex w-full justify-between sm:col-span-6">
                                   <span className="truncate text-left text-slate-300">{statLabel}</span>
                                   <span className="font-bold tabular-nums text-white">{stat.value}</span>
                                 </div>
-                                <div className="col-span-1 sm:col-span-6 w-full rounded-full bg-slate-800/70 h-2.5">
+                                <div className="w-full rounded-full bg-slate-800/70 h-2.5 sm:col-span-6">
                                   <div
                                     className={`${statColor} h-2.5 rounded-full`}
                                     style={{ width: `${(stat.value / 255) * 100}%` }}
